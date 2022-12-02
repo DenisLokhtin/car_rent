@@ -14,13 +14,11 @@ export class RentEntity {
 
   @Column({
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP',
   })
   rentStart: Date;
 
   @Column({
     type: 'timestamptz',
-    nullable: true,
   })
   rentStop: Date;
 
