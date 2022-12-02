@@ -23,9 +23,4 @@ export class CarEntity {
   })
   @JoinColumn()
   rents: RentEntity[];
-
-  @Column({
-    default: () => 'true',
-  })
-  free: boolean;
 }

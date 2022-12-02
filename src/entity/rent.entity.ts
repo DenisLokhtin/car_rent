@@ -40,4 +40,7 @@ export class RentEntity {
     default: () => 'false',
   })
   completed: boolean;
+
+  @Column({ nullable: true })
+  price: number;
 }

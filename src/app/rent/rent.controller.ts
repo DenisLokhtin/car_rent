@@ -1,9 +1,8 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { RentService } from './rent.service';
 import { RentEntity } from '../../entity/rent.entity';
-import { CreateCarDto } from '../../dto/createCar.dto';
-import { CarEntity } from '../../entity/car.entity';
 import { CreateRentDto } from '../../dto/createRent.dto';
+import { UpdateRentDto } from '../../dto/updateRent.dto';
 
 @Controller('rent')
 export class RentController {
@@ -24,5 +23,12 @@ export class RentController {
     @Body() createRentDto: CreateRentDto,
   ): Promise<RentEntity | string> {
     return await this.rentService.createOne(createRentDto);
+  }
+
+  @Put()
+  async stopRent(
+    @Body() updateRentDto: UpdateRentDto,
+  ): Promise<RentEntity | string> {
+    return await this.rentService.stopRent(updateRentDto);
   }
 }

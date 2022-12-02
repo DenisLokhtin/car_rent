@@ -4,9 +4,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateRentDto } from '../../dto/createRent.dto';
 import { CarEntity } from '../../entity/car.entity';
-import * as dayjs from 'dayjs';
 import GetDateDiff from '../../utils/getDateDiff';
 import GetWeekDay from '../../utils/getWeekDay';
+import { UpdateRentDto } from '../../dto/updateRent.dto';
+import priceCounter from '../../utils/priceCounter';
 
 @Injectable()
 export class RentService {
@@ -36,13 +37,23 @@ export class RentService {
     const dateDay1 = GetWeekDay(rentStart);
     const dateDay2 = GetWeekDay(rentStop);
 
-    if (dateDay1 === 0 || dateDay1 === 6)
+    const saturday = 6;
+    const sunday = 0;
+
+    const maxRentDay = 30;
+    const minRentDay = 1;
+
+    const minRentBreak = 3;
+
+    const price = priceCounter(diff);
+
+    if (dateDay1 === sunday || dateDay1 === saturday)
       return 'вы не можете начать аренду автомобиля в выходные дни';
 
-    if (dateDay2 === 0 || dateDay2 === 6)
+    if (dateDay2 === sunday || dateDay2 === saturday)
       return 'вы не можете закончить аренду автомобиля в выходные дни';
 
-    if (diff > 30 || diff < 1)
+    if (diff > maxRentDay || diff < minRentDay)
       return 'длина аренды не может быть меньше 1 и больше 30 дней';
 
     const rent = await this.rentRepository.findOne({
@@ -62,8 +73,10 @@ export class RentService {
       order: { rentStop: 'DESC' },
     });
 
-    if (GetDateDiff(oldRent[0].rentStop, rentStart) < 3)
-      return 'Между окончанием бронирования и началом следующего бронирования должен быть интервал 3 дня.';
+    if (oldRent.length) {
+      if (GetDateDiff(oldRent[0].rentStop, rentStart) < minRentBreak)
+        return 'Между окончанием бронирования и началом следующего бронирования должен быть интервал 3 дня.';
+    }
 
     const car = await this.carRepository.findOne({
       where: { id: createRentDto.carId },
@@ -74,6 +87,28 @@ export class RentService {
     return await this.rentRepository.save({
       ...createRentDto,
       car: car,
+      price: price,
+    });
+  }
+
+  async stopRent(updateRentDto: UpdateRentDto): Promise<RentEntity | string> {
+    const rent = await this.rentRepository.findOne({
+      where: {
+        id: updateRentDto.rentId,
+      },
+    });
+
+    if (!rent) return 'аренды с таким id не существует';
+
+    await this.rentRepository.update(
+      { id: updateRentDto.rentId },
+      { completed: true },
+    );
+
+    return await this.rentRepository.findOne({
+      where: {
+        id: updateRentDto.rentId,
+      },
     });
   }
 }
