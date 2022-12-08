@@ -102,7 +102,7 @@ export class RentService {
     });
   }
 
-  async getStat(): Promise<{}> {
+  async getStat(): Promise<[{}, { total: number }]> {
     const rents = await this.rentRepository.find({
       order: { rentStop: 'DESC' },
       relations: { car: true },
