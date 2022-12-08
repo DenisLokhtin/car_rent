@@ -8,6 +8,11 @@ import { UpdateRentDto } from '../../dto/updateRent.dto';
 export class RentController {
   constructor(private readonly rentService: RentService) {}
 
+  @Get('stat')
+  async getStat(): Promise<{}> {
+    return await this.rentService.getStat();
+  }
+
   @Get('all')
   async findAll(): Promise<RentEntity[]> {
     return await this.rentService.findAll();

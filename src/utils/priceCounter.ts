@@ -6,15 +6,15 @@ export default (diff) => {
     list.push(i);
   }
 
-  const one = list.splice(0, 3);
-  const two = list.splice(4, 8);
-  const three = list.splice(9, 16);
-  const four = list.splice(17, 29);
+  const interval1 = list.splice(0, 3);
+  const interval2 = list.splice(4, 8);
+  const interval3 = list.splice(9, 16);
+  const interval4 = list.splice(17, 29);
 
   return (
-    one.length * tariff +
-    two.length * (tariff - (tariff / 100) * 5) +
-    three.length * (tariff - (tariff / 100) * 10) +
-    four.length * (tariff - (tariff / 100) * 15)
+    interval1.length * tariff +
+    interval2.length * (tariff - (tariff / 100) * 5) +
+    interval3.length * (tariff - (tariff / 100) * 10) +
+    interval4.length * (tariff - (tariff / 100) * 15)
   );
 };
