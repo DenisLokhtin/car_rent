@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CarEntity } from '../../entity/car.entity';
-import { CreateCarDto } from '../../dto/createCar.dto';
+import { CarEntity } from './entity/car.entity';
+import { CreateCarDto } from './dto/createCar.dto';
 
 @Injectable()
 export class CarService {
@@ -16,6 +16,8 @@ export class CarService {
   }
 
   async findOne(carId): Promise<CarEntity | string> {
+    if (!carId) return 'id не передан';
+
     const car = await this.carRepository.findOne({
       where: { id: carId },
       relations: { rents: true },
@@ -26,6 +28,8 @@ export class CarService {
   }
 
   async createOne(createCarDto: CreateCarDto): Promise<CarEntity | string> {
+    if (!createCarDto.carNumber) return 'номер машины не передан';
+
     const car = await this.carRepository.findOne({
       where: { carNumber: createCarDto.carNumber },
     });

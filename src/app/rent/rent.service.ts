@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { RentEntity } from '../../entity/rent.entity';
+import { RentEntity } from './entity/rent.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { CreateRentDto } from '../../dto/createRent.dto';
-import { CarEntity } from '../../entity/car.entity';
+import { Between, Repository } from 'typeorm';
+import { CreateRentDto } from './dto/createRent.dto';
+import { CarEntity } from '../car/entity/car.entity';
 import GetDateDiff from '../../utils/getDateDiff';
-import GetWeekDay from '../../utils/getWeekDay';
-import { UpdateRentDto } from '../../dto/updateRent.dto';
-import priceCounter from '../../utils/priceCounter';
 import getDateDiff from '../../utils/getDateDiff';
+import GetWeekDay from '../../utils/getWeekDay';
+import { UpdateRentDto } from './dto/updateRent.dto';
+import priceCounter from '../../utils/priceCounter';
 import * as dayjs from 'dayjs';
 import isBetween from '../../utils/isBetween';
 import {
@@ -35,7 +35,9 @@ export class RentService {
     return await this.rentRepository.find({ order: { rentStop: 'DESC' } });
   }
 
-  async findOne(rentId): Promise<RentEntity> {
+  async findOne(rentId): Promise<RentEntity | string> {
+    if (!rentId) return 'id не передан';
+
     return await this.rentRepository.findOne({
       where: { id: rentId },
       relations: { car: true },
@@ -45,6 +47,11 @@ export class RentService {
   async createOne(createRentDto: CreateRentDto): Promise<RentEntity | string> {
     const rentStart = createRentDto.rentStart;
     const rentStop = createRentDto.rentStop;
+    const carId = createRentDto.carId;
+    const rentTakerId = createRentDto.rentTakerId;
+
+    if (!(rentStart || rentStop || carId || rentTakerId))
+      return 'один из параметров не передан';
 
     const diff = GetDateDiff(rentStart, rentStop);
     const dateDay1 = GetWeekDay(rentStart);
@@ -65,17 +72,25 @@ export class RentService {
       return 'длина аренды не может быть меньше 1 и больше 30 дней';
 
     const rent = await this.rentRepository.findOne({
-      where: {
-        carId: createRentDto.carId,
-        completed: false,
-      },
+      where: [
+        {
+          carId: carId,
+          completed: false,
+          rentStart: Between(new Date(rentStart), new Date(rentStop)),
+        },
+        {
+          carId: carId,
+          completed: false,
+          rentStop: Between(new Date(rentStart), new Date(rentStop)),
+        },
+      ],
     });
 
     if (rent) return 'автомобиль с таким номером уже арендован';
 
     const oldRent = await this.rentRepository.find({
       where: {
-        carId: createRentDto.carId,
+        carId: carId,
         completed: true,
       },
       order: { rentStop: 'DESC' },
@@ -90,7 +105,7 @@ export class RentService {
     }
 
     const car = await this.carRepository.findOne({
-      where: { id: createRentDto.carId },
+      where: { id: carId },
     });
 
     if (!car) return 'такого автомобиля не существует';
@@ -102,7 +117,7 @@ export class RentService {
     });
   }
 
-  async getStat(): Promise<[{}, { total: number }]> {
+  async getStat(): Promise<[object, { total: number }]> {
     const rents = await this.rentRepository.find({
       order: { rentStop: 'DESC' },
       relations: { car: true },
@@ -114,14 +129,13 @@ export class RentService {
       let diff = getDateDiff(rentStart, rentEnd);
 
       if (!counts[rents[rent].car.carNumber]) {
-        if (!dayjs(rentStart).isAfter(now) && !dayjs(rentEnd).isBefore(end)) {
-          if (isBetween(rentStart, rentEnd, now, end)) {
-            diff = getDateDiff(rentStart, rentEnd) - getDateDiff(now, rentEnd);
-          } else if (isBetween(rentEnd, rentStart, now, end)) {
-            diff =
-              getDateDiff(rentStart, rentEnd) - getDateDiff(rentStart, end);
-          }
+        if (isBetween(rentStart, rentEnd, now, end)) {
+          diff = getDateDiff(rentStart, rentEnd) - getDateDiff(now, rentEnd);
+        } else if (isBetween(rentEnd, rentStart, now, end)) {
+          diff = getDateDiff(rentStart, rentEnd) - getDateDiff(rentStart, end);
+        }
 
+        if (!dayjs(rentStart).isAfter(now) && !dayjs(rentEnd).isBefore(end)) {
           counts[rents[rent].car.carNumber] = Math.round((100 / 30) * diff);
         } else {
           counts[rents[rent].car.carNumber] += Math.round((100 / 30) * diff);
@@ -141,6 +155,8 @@ export class RentService {
   }
 
   async stopRent(updateRentDto: UpdateRentDto): Promise<RentEntity | string> {
+    if (!updateRentDto.rentId) return 'id не передан';
+
     const rent = await this.rentRepository.findOne({
       where: {
         id: updateRentDto.rentId,

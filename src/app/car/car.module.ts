@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CarController } from './car.controller';
-import { CarEntity } from '../../entity/car.entity';
+import { CarEntity } from './entity/car.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({

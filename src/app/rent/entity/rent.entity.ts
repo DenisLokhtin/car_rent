@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CarEntity } from './car.entity';
+import { CarEntity } from '../../car/entity/car.entity';
 
 @Entity({ name: 'rent' })
 export class RentEntity {

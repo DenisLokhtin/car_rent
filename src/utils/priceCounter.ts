@@ -1,20 +1,19 @@
 export default (diff) => {
   const tariff = 1000;
-
   const list = [];
+
   for (let i = 1; i <= diff; i++) {
     list.push(i);
   }
 
-  const interval1 = list.splice(0, 3);
-  const interval2 = list.splice(4, 8);
-  const interval3 = list.splice(9, 16);
-  const interval4 = list.splice(17, 29);
+  const getInterval = (num1, num2) => list.splice(num1, num2).length;
+  const getPrice = (interval1, interval2, percent) =>
+    getInterval(interval1, interval2) * (tariff - (tariff / 100) * percent);
 
   return (
-    interval1.length * tariff +
-    interval2.length * (tariff - (tariff / 100) * 5) +
-    interval3.length * (tariff - (tariff / 100) * 10) +
-    interval4.length * (tariff - (tariff / 100) * 15)
+    getPrice(0, 3, 0) +
+    getPrice(4, 8, 5) +
+    getPrice(9, 16, 10) +
+    getPrice(17, 29, 15)
   );
 };

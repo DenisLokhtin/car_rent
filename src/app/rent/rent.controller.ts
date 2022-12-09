@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { RentService } from './rent.service';
-import { RentEntity } from '../../entity/rent.entity';
-import { CreateRentDto } from '../../dto/createRent.dto';
-import { UpdateRentDto } from '../../dto/updateRent.dto';
+import { RentEntity } from './entity/rent.entity';
+import { CreateRentDto } from './dto/createRent.dto';
+import { UpdateRentDto } from './dto/updateRent.dto';
 
 @Controller('rent')
 export class RentController {
   constructor(private readonly rentService: RentService) {}
 
   @Get('stat')
-  async getStat(): Promise<{}> {
+  async getStat(): Promise<[object, { total: number }]> {
     return await this.rentService.getStat();
   }
 
@@ -19,7 +19,7 @@ export class RentController {
   }
 
   @Get(':id')
-  async findOne(@Query('id') id): Promise<RentEntity> {
+  async findOne(@Query('id') id): Promise<RentEntity | string> {
     return await this.rentService.findOne(id);
   }
 
