@@ -50,8 +50,8 @@ export class RentService {
     const carId = createRentDto.carId;
     const rentTakerId = createRentDto.rentTakerId;
 
-    if (!(rentStart || rentStop || carId || rentTakerId))
-      return 'один из параметров не передан';
+    if (!rentStart || !rentStop || !carId || !rentTakerId)
+      return `один из параметров не передан`;
 
     const diff = GetDateDiff(rentStart, rentStop);
     const dateDay1 = GetWeekDay(rentStart);
