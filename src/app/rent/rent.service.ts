@@ -141,6 +141,12 @@ export class RentService {
           counts[rents[rent].car.carNumber] += Math.round((100 / 30) * diff);
         }
       }
+
+      if (
+        counts[rents[rent].car.carNumber] === null ||
+        isNaN(counts[rents[rent].car.carNumber])
+      )
+        counts[rents[rent].car.carNumber] = 0;
     }
 
     const sum = Object.values(counts).reduce(

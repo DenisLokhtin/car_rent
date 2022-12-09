@@ -15,6 +15,4 @@ export const DataSourceOption: DataSourceOptions = {
   migrationsTableName: 'migrations_history',
   migrationsRun: true,
 };
-
-const dataSource = new DataSource(DataSourceOption);
-export default dataSource;
+new DataSource(DataSourceOption);
