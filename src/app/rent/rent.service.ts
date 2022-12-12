@@ -128,25 +128,16 @@ export class RentService {
       const rentEnd = rents[rent].rentStop;
       let diff = getDateDiff(rentStart, rentEnd);
 
-      if (!counts[rents[rent].car.carNumber]) {
-        if (isBetween(rentStart, rentEnd, now, end)) {
-          diff = getDateDiff(rentStart, rentEnd) - getDateDiff(now, rentEnd);
-        } else if (isBetween(rentEnd, rentStart, now, end)) {
-          diff = getDateDiff(rentStart, rentEnd) - getDateDiff(rentStart, end);
-        }
-
-        if (!dayjs(rentStart).isAfter(now) && !dayjs(rentEnd).isBefore(end)) {
+      if (isBetween(rentStart, rentEnd, now, end)) {
+        diff = getDateDiff(rentStart, rentEnd) - getDateDiff(now, rentEnd);
+      } else if (isBetween(rentEnd, rentStart, now, end)) {
+        diff = getDateDiff(rentStart, rentEnd) - getDateDiff(rentStart, end);
+      }
+      if (!dayjs(rentStart).isAfter(now) && !dayjs(rentEnd).isBefore(end)) {
+        if (!counts[rents[rent].car.carNumber]) {
           counts[rents[rent].car.carNumber] = Math.round((100 / 30) * diff);
-        } else {
-          counts[rents[rent].car.carNumber] += Math.round((100 / 30) * diff);
         }
       }
-
-      if (
-        counts[rents[rent].car.carNumber] === null ||
-        isNaN(counts[rents[rent].car.carNumber])
-      )
-        counts[rents[rent].car.carNumber] = 0;
     }
 
     const sum = Object.values(counts).reduce(
