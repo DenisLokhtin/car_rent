@@ -53,11 +53,10 @@ export class RentService {
     if (!rentStart || !rentStop || !carId || !rentTakerId)
       return `один из параметров не передан`;
 
-    const diff = GetDateDiff(rentStart, rentStop);
     const dateDay1 = GetWeekDay(rentStart);
     const dateDay2 = GetWeekDay(rentStop);
 
-    const price = priceCounter(diff);
+    const diff = GetDateDiff(rentStart, rentStop);
 
     if (dayjs(rentStart).isAfter(rentStop))
       return 'дата конца аренды не может находится раньше даты начала аренды';
@@ -109,6 +108,15 @@ export class RentService {
     });
 
     if (!car) return 'такого автомобиля не существует';
+
+    const discounts = [
+      { start: 1, end: 4, percentage: 0 },
+      { start: 5, end: 9, percentage: 5 },
+      { start: 10, end: 17, percentage: 10 },
+      { start: 18, end: 30, percentage: 15 },
+    ];
+
+    const price = priceCounter(diff, discounts, car.tariff);
 
     return await this.rentRepository.save({
       ...createRentDto,

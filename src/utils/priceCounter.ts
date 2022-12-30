@@ -1,19 +1,19 @@
-export default (diff) => {
-  const tariff = 1000;
-  const list = [];
+export default (days, discounts, tariff) => {
+  let rentalPrice = 0;
 
-  for (let i = 1; i <= diff; i++) {
-    list.push(i);
+  for (let i = 1; i <= days; i++) {
+    let price = tariff;
+
+    for (const discount of discounts) {
+      if (i >= discount.start && i <= discount.end) {
+        const discountAmount = price * (discount.percentage / 100);
+        price -= discountAmount;
+        break;
+      }
+    }
+
+    rentalPrice += price;
   }
 
-  const getInterval = (num1, num2) => list.splice(num1, num2).length;
-  const getPrice = (interval1, interval2, percent) =>
-    getInterval(interval1, interval2) * (tariff - (tariff / 100) * percent);
-
-  return (
-    getPrice(0, 3, 0) +
-    getPrice(4, 8, 5) +
-    getPrice(9, 16, 10) +
-    getPrice(17, 29, 15)
-  );
+  return Math.round(rentalPrice);
 };

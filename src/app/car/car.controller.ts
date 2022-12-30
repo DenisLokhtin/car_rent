@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CarEntity } from './entity/car.entity';
 import { CreateCarDto } from './dto/createCar.dto';
@@ -22,5 +22,13 @@ export class CarController {
     @Body() createCarDto: CreateCarDto,
   ): Promise<CarEntity | string> {
     return await this.carService.createOne(createCarDto);
+  }
+
+  @Put(':id')
+  async changeOne(
+    @Body() createCarDto: CreateCarDto,
+    @Param('id') id,
+  ): Promise<CarEntity> {
+    return await this.carService.changeOne(id, createCarDto);
   }
 }

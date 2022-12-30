@@ -38,4 +38,17 @@ export class CarService {
 
     return await this.carRepository.save(createCarDto);
   }
+
+  async changeOne(
+    carId: number,
+    createCarDto: CreateCarDto,
+  ): Promise<CarEntity> {
+    const profile = await this.carRepository.findOne({
+      where: { id: carId },
+    });
+    if (profile) {
+      await this.carRepository.update({ id: carId }, createCarDto);
+      return await this.carRepository.findOne({ where: { id: carId } });
+    }
+  }
 }
