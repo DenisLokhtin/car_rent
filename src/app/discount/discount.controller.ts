@@ -8,7 +8,9 @@ import {
   // Param,
 } from '@nestjs/common';
 import { DiscountService } from './discount.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('car')
 @Controller('discount')
 export class DiscountController {
   constructor(private discountService: DiscountService) {}
