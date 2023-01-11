@@ -14,12 +14,6 @@ async function bootstrap() {
   };
 
   const config = new DocumentBuilder()
-    .addBearerAuth({
-      type: 'http',
-      scheme: 'bearer',
-      bearerFormat: 'JWT',
-      in: 'header',
-    })
     .setTitle('Car rent')
     .setDescription('Car rent Documentation')
     .build();
