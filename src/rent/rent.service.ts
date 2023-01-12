@@ -4,13 +4,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { CreateRentDto } from './dto/createRent.dto';
 import { CarEntity } from '../car/entity/car.entity';
-import GetDateDiff from '../../utils/getDateDiff';
-import getDateDiff from '../../utils/getDateDiff';
-import GetWeekDay from '../../utils/getWeekDay';
+import GetDateDiff from '../utils/getDateDiff';
+import getDateDiff from '../utils/getDateDiff';
+import GetWeekDay from '../utils/getWeekDay';
 import { UpdateRentDto } from './dto/updateRent.dto';
-import priceCounter from '../../utils/priceCounter';
+import priceCounter from '../utils/priceCounter';
 import * as dayjs from 'dayjs';
-import isBetween from '../../utils/isBetween';
+import isBetween from '../utils/isBetween';
 import {
   counts,
   end,
@@ -20,7 +20,7 @@ import {
   now,
   saturday,
   sunday,
-} from '../../utils/consts';
+} from '../utils/consts';
 
 @Injectable()
 export class RentService {
@@ -109,6 +109,7 @@ export class RentService {
 
     if (!car) return 'такого автомобиля не существует';
 
+    // if (start >= num1 && start <= num2)
     const discounts = [
       { start: 1, end: 4, percentage: 0 },
       { start: 5, end: 9, percentage: 5 },

@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CarEntity } from './entity/car.entity';
 import { CreateCarDto } from './dto/createCar.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('car')
 @Controller('car')
@@ -14,6 +14,12 @@ export class CarController {
     return await this.carService.findAll();
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'enter car id',
+    required: true,
+  })
   @Get(':id')
   async findOne(@Param('id') id): Promise<CarEntity | string> {
     return await this.carService.findOne(id);
@@ -26,6 +32,12 @@ export class CarController {
     return await this.carService.createOne(createCarDto);
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'enter car id',
+    required: true,
+  })
   @Put(':id')
   async changeOne(
     @Body() createCarDto: CreateCarDto,

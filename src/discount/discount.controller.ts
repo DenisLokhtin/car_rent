@@ -1,6 +1,6 @@
 import { Controller, Delete, Get, Post, Put } from '@nestjs/common';
 import { DiscountService } from './discount.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('discount')
 @Controller('discount')
@@ -17,16 +17,34 @@ export class DiscountController {
     return await this.discountService.addDiscount();
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'enter discount id',
+    required: true,
+  })
   @Get(':id')
   async getDiscount() {
     return this.discountService.getDiscount();
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'enter discount id',
+    required: true,
+  })
   @Put(':id')
   async updateDiscount() {
     return this.discountService.updateDiscount();
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'enter discount id',
+    required: true,
+  })
   @Delete(':id')
   async deleteDiscount() {
     return this.discountService.deleteDiscount();

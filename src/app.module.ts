@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { CarModule } from './app/car/car.module';
-import { RentModule } from './app/rent/rent.module';
+import { CarModule } from './car/car.module';
+import { RentModule } from './rent/rent.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSourceOption } from './typeOrmConfig/typeOrm.config';
-import { DiscountModule } from './app/discount/discount.module';
+import { DataSourceOption } from '../db/typeOrm.config';
+import { DiscountModule } from './discount/discount.module';
 
 @Module({
   imports: [

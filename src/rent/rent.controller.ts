@@ -3,7 +3,7 @@ import { RentService } from './rent.service';
 import { RentEntity } from './entity/rent.entity';
 import { CreateRentDto } from './dto/createRent.dto';
 import { UpdateRentDto } from './dto/updateRent.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('rent')
 @Controller('rent')
@@ -20,6 +20,12 @@ export class RentController {
     return await this.rentService.findAll();
   }
 
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: 'enter rent id',
+    required: true,
+  })
   @Get(':id')
   async findOne(@Query('id') id): Promise<RentEntity | string> {
     return await this.rentService.findOne(id);
